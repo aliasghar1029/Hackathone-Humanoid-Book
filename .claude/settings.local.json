@@ -1,0 +1,24 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git fetch:*)",
+      "Bash(ls:*)",
+      "Bash(powershell:*)",
+      "SlashCommand(/sp.plan)",
+      "Bash(npx create-docusaurus@latest:*)",
+      "Bash(npm run deploy)",
+      "Bash(git init:*)",
+      "Bash(git remote:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(set:*)",
+      "Bash(GIT_USER=aliasghar1029 npm run deploy:*)",
+      "mcp__github__search_repositories",
+      "mcp__github__create_repository",
+      "mcp__github__get_me",
+      "mcp__github__create_branch"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "id": "modules/nvidia-isaac",
+  "title": "Module 3: NVIDIA Isaac Platform – The Complete AI Robotics Stack (2025 Edition)",
+  "description": "Expanded",
+  "source": "@site/docs/modules/03-nvidia-isaac.md",
+  "sourceDirName": "modules",
+  "slug": "/modules/nvidia-isaac",
+  "permalink": "/Hackathone-Humanoid-Book/docs/modules/nvidia-isaac",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/aliasghar1029/Hackathone-Humanoid-Book/tree/main/docs/modules/03-nvidia-isaac.md",
+  "tags": [],
+  "version": "current",
+  "sidebarPosition": 3,
+  "frontMatter": {
+    "sidebar_label": "03 - NVIDIA Isaac Platform – The AI Robot Brain",
+    "sidebar_position": 3,
+    "keywords": [
+      "NVIDIA Isaac",
+      "Isaac ROS",
+      "Isaac Sim",
+      "Omniverse",
+      "Jetson",
+      "CUDA",
+      "synthetic data",
+      "AI robotics",
+      "deep learning"
+    ]
+  },
+  "sidebar": "docs",
+  "previous": {
+    "title": "02 - Gazebo & Unity – The Digital Twin",
+    "permalink": "/Hackathone-Humanoid-Book/docs/modules/gazebo-unity"
+  },
+  "next": {
+    "title": "04 - Vision-Language-Action (VLA) & Capstone",
+    "permalink": "/Hackathone-Humanoid-Book/docs/modules/vla-capstone"
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "id": "modules/ros2",
+  "title": "Module 1: ROS 2 – The Robotic Nervous System (Complete & Detailed)",
+  "description": "Expanded",
+  "source": "@site/docs/modules/01-ros2.md",
+  "sourceDirName": "modules",
+  "slug": "/modules/ros2",
+  "permalink": "/Hackathone-Humanoid-Book/docs/modules/ros2",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/aliasghar1029/Hackathone-Humanoid-Book/tree/main/docs/modules/01-ros2.md",
+  "tags": [],
+  "version": "current",
+  "sidebarPosition": 1,
+  "frontMatter": {
+    "sidebar_label": "01 - ROS 2 - The Robotic Nervous System",
+    "sidebar_position": 1,
+    "keywords": [
+      "ROS2",
+      "Robot Operating System",
+      "robotics middleware",
+      "nodes",
+      "topics",
+      "DDS"
+    ]
+  },
+  "sidebar": "docs",
+  "previous": {
+    "title": "Why Physical AI & Humanoids Matter",
+    "permalink": "/Hackathone-Humanoid-Book/docs/why-physical-ai"
+  },
+  "next": {
+    "title": "02 - Gazebo & Unity – The Digital Twin",
+    "permalink": "/Hackathone-Humanoid-Book/docs/modules/gazebo-unity"
+  }
+}

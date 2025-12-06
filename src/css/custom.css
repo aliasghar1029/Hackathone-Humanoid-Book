@@ -1,0 +1,86 @@
+/**
+ * Any CSS included here will be global. The classic template
+ * bundles Infima by default. Infima is a CSS framework designed to
+ * work well for content-centric websites.
+ */
+
+/* You can override the default Infima variables here. */
+:root {
+  --ifm-color-primary: #2e8555;
+  --ifm-color-primary-dark: #29784c;
+  --ifm-color-primary-darker: #277148;
+  --ifm-color-primary-darkest: #205d3b;
+  --ifm-color-primary-light: #33925d;
+  --ifm-color-primary-lighter: #359962;
+  --ifm-color-primary-lightest: #3cad6e;
+  --ifm-code-font-size: 95%;
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
+}
+
+/* For readability concerns, you should choose a lighter palette in dark mode. */
+[data-theme='dark'] {
+  --ifm-color-primary: #25c2a0;
+  --ifm-color-primary-dark: #21af90;
+  --ifm-color-primary-darker: #1fa588;
+  --ifm-color-primary-darkest: #1a8870;
+  --ifm-color-primary-light: #29d5b0;
+  --ifm-color-primary-lighter: #32d8b4;
+  --ifm-color-primary-lightest: #4fddbf;
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
+}
+
+/* Mobile-first adjustments */
+
+/* Adjust main content area for smaller screens */
+@media screen and (max-width: 996px) {
+  .main-wrapper, .doc-wrapper {
+    padding: 0 16px; /* Add some padding to the sides */
+  }
+}
+
+/* Make images responsive */
+.markdown img {
+  max-width: 100%;
+  height: auto;
+  display: block; /* Remove extra space below images */
+  margin: 0 auto; /* Center images */
+}
+
+/* Make tables horizontally scrollable on small screens */
+.markdown table {
+  display: block;
+  overflow-x: auto;
+  white-space: nowrap; /* Prevent text wrapping in table cells */
+}
+
+/* Adjust font sizes for better readability on mobile */
+@media screen and (max-width: 768px) {
+  h1 { font-size: 2.2em; }
+  h2 { font-size: 1.8em; }
+  h3 { font-size: 1.4em; }
+  p, li { font-size: 0.95em; }
+}
+
+/* Accessibility (WCAG 2.1 AA) considerations */
+
+/* Ensure focusable elements have a clear outline */
+:focus-visible {
+  outline: 2px solid var(--ifm-color-primary); /* Use primary color for focus */
+  outline-offset: 2px;
+}
+
+/* Improve link readability in content */
+.markdown a:not(.button) {
+  text-decoration: underline; /* Always underline links for clarity */
+}
+
+/* Ensure sufficient line height for readability */
+body {
+  line-height: 1.5;
+}
+
+/* Adjust font smoothing for better readability */
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}

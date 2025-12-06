@@ -1,0 +1,28 @@
+{
+  "id": "weekly-breakdown",
+  "title": "13-Week Mastery Roadmap (2025 Edition)",
+  "description": "From Zero to Deploying a Vision-Language-Action Humanoid Agent",
+  "source": "@site/docs/weekly-breakdown.md",
+  "sourceDirName": ".",
+  "slug": "/weekly-breakdown",
+  "permalink": "/Hackathone-Humanoid-Book/docs/weekly-breakdown",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/aliasghar1029/Hackathone-Humanoid-Book/tree/main/docs/weekly-breakdown.md",
+  "tags": [],
+  "version": "current",
+  "sidebarPosition": 99,
+  "frontMatter": {
+    "sidebar_label": "Weekly Breakdown",
+    "sidebar_position": 99
+  },
+  "sidebar": "docs",
+  "previous": {
+    "title": "04 - Vision-Language-Action (VLA) & Capstone",
+    "permalink": "/Hackathone-Humanoid-Book/docs/modules/vla-capstone"
+  },
+  "next": {
+    "title": "Learning Outcomes",
+    "permalink": "/Hackathone-Humanoid-Book/docs/outcomes"
+  }
+}

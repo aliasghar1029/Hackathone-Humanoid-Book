@@ -1,0 +1,39 @@
+{
+  "id": "modules/vla-capstone",
+  "title": "Module 4: Vision-Language-Action Models – The Brain of Tomorrow’s Robots + Final Capstone (2025 Edition)",
+  "description": "Expanded",
+  "source": "@site/docs/modules/04-vla-capstone.md",
+  "sourceDirName": "modules",
+  "slug": "/modules/vla-capstone",
+  "permalink": "/Hackathone-Humanoid-Book/docs/modules/vla-capstone",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/aliasghar1029/Hackathone-Humanoid-Book/tree/main/docs/modules/04-vla-capstone.md",
+  "tags": [],
+  "version": "current",
+  "sidebarPosition": 4,
+  "frontMatter": {
+    "sidebar_label": "04 - Vision-Language-Action (VLA) & Capstone",
+    "sidebar_position": 4,
+    "keywords": [
+      "VLA",
+      "Vision-Language-Action",
+      "RT-2",
+      "Octo",
+      "OpenVLA",
+      "RoboAgent",
+      "LLM robotics",
+      "foundation models",
+      "robot agent"
+    ]
+  },
+  "sidebar": "docs",
+  "previous": {
+    "title": "03 - NVIDIA Isaac Platform – The AI Robot Brain",
+    "permalink": "/Hackathone-Humanoid-Book/docs/modules/nvidia-isaac"
+  },
+  "next": {
+    "title": "Weekly Breakdown",
+    "permalink": "/Hackathone-Humanoid-Book/docs/weekly-breakdown"
+  }
+}

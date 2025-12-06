@@ -1,0 +1,22 @@
+{
+  "id": "intro",
+  "title": "Introduction",
+  "description": "This course introduces the foundational concepts and practical applications of physical AI and humanoid robotics. Students will gain hands-on experience with ROS 2, Gazebo, Unity, and NVIDIA Isaac™, culminating in the ability to design, simulate, and deploy AI-driven robotic systems.",
+  "source": "@site/docs/intro.md",
+  "sourceDirName": ".",
+  "slug": "/intro",
+  "permalink": "/Hackathone-Humanoid-Book/docs/intro",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/aliasghar1029/Hackathone-Humanoid-Book/tree/main/docs/intro.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {
+    "sidebar_label": "Introduction"
+  },
+  "sidebar": "docs",
+  "next": {
+    "title": "Why Physical AI & Humanoids Matter",
+    "permalink": "/Hackathone-Humanoid-Book/docs/why-physical-ai"
+  }
+}
