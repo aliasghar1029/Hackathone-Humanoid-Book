@@ -10,7 +10,7 @@ Thumbs.db
 .vscode/
 .idea/
 backend/.env.docusaurus 
-.docusaurus 
+.docusaurus/
 # Python
 venv/
 backend/venv/
