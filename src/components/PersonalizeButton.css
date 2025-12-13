@@ -1,0 +1,61 @@
+.personalize-section {
+  margin: 20px 0;
+  padding: 20px;
+  border: 1px solid #00ffff;
+  border-radius: 8px;
+  background: rgba(0, 255, 255, 0.05);
+}
+
+.personalize-controls {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+  flex-wrap: wrap;
+}
+
+.personalize-btn, .reset-btn, .toggle-view-btn {
+  padding: 8px 16px;
+  border: 1px solid #00ffff;
+  background: #000;
+  color: #00ffff;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: 'Courier New', 'Courier', monospace;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.personalize-btn:hover, .reset-btn:hover, .toggle-view-btn:hover {
+  background: #00ffff;
+  color: #000;
+}
+
+.personalize-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.personalize-btn:disabled:hover {
+  background: #000;
+  color: #00ffff;
+}
+
+.personalized-content {
+  padding: 15px;
+  background: rgba(0, 128, 255, 0.1);
+  border-left: 3px solid #0080ff;
+  border-radius: 4px;
+}
+
+.personalized-content h3 {
+  color: #00ffff;
+  margin-top: 0;
+  font-size: 16px;
+}
+
+.original-content {
+  padding: 15px;
+  background: rgba(255, 255, 255, 0.05);
+  border-left: 3px solid #666;
+  border-radius: 4px;
+}

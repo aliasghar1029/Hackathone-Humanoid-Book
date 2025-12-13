@@ -1,0 +1,41 @@
+.login-btn {
+  padding: 8px 16px;
+  background: linear-gradient(135deg, #00ffff, #0080ff);
+  color: #000;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: 'Courier New', 'Courier', monospace;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.login-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 255, 255, 0.4);
+}
+
+.user-menu {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.user-name {
+  color: #00ffff;
+  font-family: 'Courier New', 'Courier', monospace;
+}
+
+.logout-btn {
+  padding: 6px 12px;
+  background: #ff4444;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: 'Courier New', 'Courier', monospace;
+}
+
+.logout-btn:hover {
+  background: #ff0000;
+}
