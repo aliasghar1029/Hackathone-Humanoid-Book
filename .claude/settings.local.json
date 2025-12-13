@@ -64,7 +64,9 @@
       "Bash(python test_error_handling.py)",
       "Bash(python test_final.py:*)",
       "Bash(python final_integration_test.py:*)",
-      "Bash(python -c \"\nimport ast\nwith open(''E:/Book/Humanoid-Book/backend/app.py'', ''r'', encoding=''utf-8'') as f:\n    content = f.read()\n\ntry:\n    tree = ast.parse(content)\n    print(''Syntax is valid'')\nexcept SyntaxError as e:\n    print(f''Syntax error at line {e.lineno}: {e.msg}'')\n    print(f''Line content: {content.splitlines()[e.lineno-1] if e.lineno <= len(content.splitlines()) else \"\"Line not found\"\"}'')\n\")"
+      "Bash(python -c \"\nimport ast\nwith open(''E:/Book/Humanoid-Book/backend/app.py'', ''r'', encoding=''utf-8'') as f:\n    content = f.read()\n\ntry:\n    tree = ast.parse(content)\n    print(''Syntax is valid'')\nexcept SyntaxError as e:\n    print(f''Syntax error at line {e.lineno}: {e.msg}'')\n    print(f''Line content: {content.splitlines()[e.lineno-1] if e.lineno <= len(content.splitlines()) else \"\"Line not found\"\"}'')\n\")",
+      "Bash(npm install)",
+      "Bash(npm install --legacy-peer-deps)"
     ],
     "deny": [],
     "ask": []
