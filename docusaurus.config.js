@@ -19,6 +19,7 @@ const config = {
     v4: true, // Improve compatibility with the upcoming Docusaurus v4
   },
 
+
   // Set the production url of your site here
   url: 'https://panaversity.github.io',
   baseUrl: '/',
@@ -39,6 +40,9 @@ const config = {
     locales: ['en'],
   },
 
+  plugins: [
+    './src/plugins/proxyPlugin.js', // API proxy plugin
+  ],
   presets: [
     [
       'classic',
@@ -57,6 +61,7 @@ const config = {
       }),
     ],
   ],
+
 
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
@@ -98,4 +103,5 @@ const config = {
     }),
 };
 
+// Export the config and handle devServer separately in package.json scripts
 export default config;

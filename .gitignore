@@ -9,3 +9,21 @@ Thumbs.db
 *.swp
 .vscode/
 .idea/
+backend/.env.docusaurus 
+.docusaurus 
+# Python
+venv/
+backend/venv/
+__pycache__/
+
+# OS junk
+nul
+.DS_Store
+
+# Docusaurus
+.docusaurus
+build
+.cache
+
+# Node
+node_modules
