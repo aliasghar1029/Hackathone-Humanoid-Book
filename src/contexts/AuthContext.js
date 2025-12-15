@@ -2,102 +2,70 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 
 const AuthContext = createContext();
 
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
-};
-
-export const AuthProvider = ({ children }) => {
+// Define the provider component
+const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check if user is logged in on initial load
-    const token = localStorage.getItem('auth_token');
-    if (token) {
-      fetchUser();
-    } else {
-      setLoading(false);
+    // Check if user is logged in on initial load using localStorage
+    const userData = localStorage.getItem('user_data');
+    if (userData) {
+      try {
+        const parsedUser = JSON.parse(userData);
+        setUser(parsedUser);
+      } catch (e) {
+        console.error('Error parsing user data:', e);
+      }
     }
+    setLoading(false);
   }, []);
 
-  const fetchUser = async () => {
-    try {
-      const token = localStorage.getItem('auth_token');
-      if (!token) {
-        setLoading(false);
-        return;
-      }
+  const login = (email, password) => {
+    // For demo purposes, we'll check if user exists in localStorage
+    const storedUsers = JSON.parse(localStorage.getItem('users') || '[]');
+    const foundUser = storedUsers.find(user => user.email === email && user.password === password);
 
-      const response = await fetch('/api/auth/me', {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-      });
-
-      if (response.ok) {
-        const userData = await response.json();
-        setUser(userData);
-      } else {
-        localStorage.removeItem('auth_token');
-      }
-    } catch (err) {
-      console.error('Auth error:', err);
-    } finally {
-      setLoading(false);
+    if (foundUser) {
+      // Remove password from user object for security
+      const { password, ...userWithoutPassword } = foundUser;
+      localStorage.setItem('user_data', JSON.stringify(userWithoutPassword));
+      setUser(userWithoutPassword);
+      return { success: true, user: userWithoutPassword };
+    } else {
+      return { success: false, error: 'Invalid email or password' };
     }
   };
 
-  const login = async (email, password) => {
-    try {
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-      });
+  const signup = (userData) => {
+    // Check if user already exists
+    const storedUsers = JSON.parse(localStorage.getItem('users') || '[]');
+    const existingUser = storedUsers.find(user => user.email === userData.email);
 
-      const result = await response.json();
-      if (response.ok) {
-        localStorage.setItem('auth_token', result.token);
-        setUser(result.user);
-        return { success: true };
-      } else {
-        return { success: false, error: result.detail || 'Login failed' };
-      }
-    } catch (err) {
-      return { success: false, error: err.message };
+    if (existingUser) {
+      return { success: false, error: 'User already exists' };
     }
-  };
 
-  const signup = async (userData) => {
-    try {
-      const response = await fetch('/api/auth/signup', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(userData),
-      });
+    // Add new user with background and preferences
+    const newUser = {
+      id: Date.now().toString(),
+      ...userData,
+      createdAt: new Date().toISOString()
+    };
 
-      const result = await response.json();
-      if (response.ok) {
-        // Auto-login after signup
-        return login(userData.email, userData.password);
-      } else {
-        return { success: false, error: result.detail || 'Signup failed' };
-      }
-    } catch (err) {
-      return { success: false, error: err.message };
-    }
+    storedUsers.push(newUser);
+    localStorage.setItem('users', JSON.stringify(storedUsers));
+
+    // Remove password from user object for security
+    const { password, ...userWithoutPassword } = newUser;
+    localStorage.setItem('user_data', JSON.stringify(userWithoutPassword));
+    setUser(userWithoutPassword);
+
+    return { success: true, user: userWithoutPassword };
   };
 
   const logout = () => {
-    localStorage.removeItem('auth_token');
+    localStorage.removeItem('user_data');
     setUser(null);
   };
 
@@ -107,7 +75,6 @@ export const AuthProvider = ({ children }) => {
     login,
     signup,
     logout,
-    fetchUser,
   };
 
   return (
@@ -116,3 +83,18 @@ export const AuthProvider = ({ children }) => {
     </AuthContext.Provider>
   );
 };
+
+// Create the hook separately
+const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
+};
+
+// Export the provider and hook as named exports
+export { AuthProvider, useAuth };
+
+// Export the provider as default
+export default AuthProvider;

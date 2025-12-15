@@ -18,6 +18,16 @@ import json
 import re
 import time
 
+# Import auth, translation, subagent, and personalization modules
+import sys
+import os
+sys.path.append(os.path.dirname(__file__))
+
+from auth import auth_router
+from translation import translation_router
+from subagents.api import subagent_router
+from personalization import personalization_router
+
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -52,6 +62,18 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Include authentication routes
+app.include_router(auth_router, prefix="/api/auth", tags=["authentication"])
+
+# Include translation routes
+app.include_router(translation_router, prefix="/api/translate", tags=["translation"])
+
+# Include subagent routes
+app.include_router(subagent_router, prefix="/api/subagents", tags=["subagents"])
+
+# Include personalization routes
+app.include_router(personalization_router, prefix="/api/personalization", tags=["personalization"])
 
 # Initialize clients
 try:
@@ -123,10 +145,17 @@ def get_db_connection():
 class QueryRequest(BaseModel):
     query: str
     selected_text: Optional[str] = None
+    user_background: Optional[str] = None  # Added for personalization
+    target_language: Optional[str] = None  # Added for translation
+    personalization_enabled: Optional[bool] = True  # Added to control personalization
+    translation_enabled: Optional[bool] = False  # Added to control translation
 
 class QueryResponse(BaseModel):
     answer: str  # Changed from 'response' to 'answer' to match frontend expectation
     sources: Optional[List[Dict[str, Any]]] = []
+    original_answer: Optional[str] = None  # Added for translation feature
+    personalization_applied: Optional[bool] = False  # Added to indicate if personalization was applied
+    translation_applied: Optional[bool] = False  # Added to indicate if translation was applied
 
 class IngestRequest(BaseModel):
     file_path: str
@@ -167,6 +196,10 @@ async def query_endpoint(request: QueryRequest):
         logger.info(f"Received query: {request.query[:100]}...")
         if request.selected_text:
             logger.info(f"Received selected text: {request.selected_text[:100]}...")
+        if request.user_background:
+            logger.info(f"User background: {request.user_background}")
+        if request.target_language:
+            logger.info(f"Target language: {request.target_language}")
 
         # Validate clients - FIXED: Check for None values properly
         if not qdrant_client:
@@ -351,164 +384,73 @@ Please provide a detailed answer based on the context.
         )
 
         answer = response.choices[0].message.content
+        original_answer = answer  # Store original answer before personalization/translation
+
+        # Apply personalization if enabled and user background is provided
+        personalization_applied = False
+        if request.personalization_enabled and request.user_background:
+            try:
+                from personalization import personalization_agent, personalization_skills
+
+                # Personalize the answer based on user background
+                answer = await personalization_agent.personalize_content(
+                    content=answer,
+                    user_background=request.user_background
+                )
+                personalization_applied = True
+                logger.info(f"Personalization applied for background: {request.user_background}")
+            except Exception as e:
+                logger.error(f"Personalization failed: {e}")
+                # Continue with original answer if personalization fails
+
+        # Apply translation if enabled and target language is provided
+        translation_applied = False
+        if request.translation_enabled and request.target_language and request.target_language.lower() == "ur":
+            try:
+                from translation import translation_agent, translation_skills
+
+                # Translate the answer to target language
+                translated_answer = await translation_agent.translate_content(
+                    content=answer,
+                    target_language=request.target_language
+                )
+
+                # Validate the translation
+                validation = await translation_skills.validate_translation(translated_answer, answer)
+
+                if validation["is_valid"]:
+                    answer = await translation_skills.postprocess_translation(
+                        translated_answer, answer, request.target_language
+                    )
+                    translation_applied = True
+                    logger.info(f"Translation applied to language: {request.target_language}")
+                else:
+                    logger.warning(f"Translation validation failed: {validation['errors']}")
+            except Exception as e:
+                logger.error(f"Translation failed: {e}")
+                # Continue with original answer if translation fails
+
         process_time = time.time() - start_time
         logger.info(f"Query processed in {process_time:.2f}s")
 
-        return QueryResponse(answer=answer, sources=sources)
+        return QueryResponse(
+            answer=answer,
+            sources=sources,
+            original_answer=original_answer if personalization_applied or translation_applied else None,
+            personalization_applied=personalization_applied,
+            translation_applied=translation_applied
+        )
 
     except Exception as e:
         process_time = time.time() - start_time
         logger.error(f"Error in query_endpoint after {process_time:.2f}s: {e}", exc_info=True)
-        return QueryResponse(answer="I'm having trouble generating a response right now. The server might be busy. Please try again in a moment.", sources=[])
-
-        # Prepare search conditions
-        search_results = []
-
-        # If selected text exists, prioritize it
-        if selected_text:
-            try:
-                # First, search specifically for chunks related to the selected text
-                selected_text_embedding = co.embed(
-                    texts=[selected_text],
-                    model='embed-english-v3.0',
-                    input_type="search_query"
-                ).embeddings[0]
-
-                # Search for similar chunks to the selected text
-                selected_results = qdrant_client.search(
-                    collection_name="documents",
-                    query_vector=selected_text_embedding,
-                    limit=3,
-                    with_payload=True,
-                    with_vectors=False
-                )
-
-                # Also search for general query
-                general_results = qdrant_client.search(
-                    collection_name="documents",
-                    query_vector=query_embedding,
-                    limit=5,
-                    with_payload=True,
-                    with_vectors=False
-                )
-
-                # Combine results, prioritizing those related to selected text
-                all_results = selected_results + [r for r in general_results if r not in selected_results]
-                search_results = all_results[:8]  # Limit to 8 total results
-            except Exception as e:
-                logger.error(f"Error during search with selected text: {e}")
-                # Fallback to general search only
-                try:
-                    search_results = qdrant_client.search(
-                        collection_name="documents",
-                        query_vector=query_embedding,
-                        limit=8,
-                        with_payload=True,
-                        with_vectors=False
-                    )
-                except Exception as e2:
-                    logger.error(f"Fallback search also failed: {e2}")
-                    return QueryResponse(answer="Search service is temporarily unavailable. Please try again later.", sources=[])
-        else:
-            # Just search for the query
-            try:
-                search_results = qdrant_client.search(
-                    collection_name="documents",
-                    query_vector=query_embedding,
-                    limit=8,
-                    with_payload=True,
-                    with_vectors=False
-                )
-            except Exception as e:
-                logger.error(f"General search failed: {e}")
-                return QueryResponse(answer="Search service is temporarily unavailable. Please try again later.", sources=[])
-
-        # Extract content and metadata from results
-        context_parts = []
-        sources = []
-
-        for result in search_results:
-            try:
-                payload = result.payload
-                content = payload.get("content", "")
-                metadata = payload.get("metadata", {})
-
-                if content.strip():  # Only add non-empty content
-                    context_parts.append(content)
-
-                sources.append({
-                    "title": metadata.get("title", ""),
-                    "source": metadata.get("source", ""),
-                    "page_number": metadata.get("page_number", 0),
-                    "chunk_id": metadata.get("chunk_id", ""),
-                    "score": result.score
-                })
-            except Exception as e:
-                logger.error(f"Error processing search result: {e}")
-                continue
-
-        # Build context for LLM - limit context to avoid token limits
-        context = "\n\n".join(context_parts[:5])  # Use only first 5 chunks to avoid token limits
-
-        # Limit context length to prevent exceeding model limits
-        if len(context) > 3000:  # Rough limit to stay within token limits
-            context = context[:3000] + "... (truncated)"
-
-        # Build the prompt for the LLM
-        if selected_text:
-            prompt = f"""
-You are an expert assistant for the Physical AI & Humanoid Robotics Textbook. Answer the user's question based on the provided context.
-
-IMPORTANT: The user has selected specific text that they want to focus on. Prioritize answering about this selected text in your response.
-
-Selected Text: {selected_text}
-
-Context from the textbook:
-{context}
-
-Question: {request.query}
-
-Please provide a detailed answer based on the context, with special focus on the selected text if relevant.
-"""
-        else:
-            prompt = f"""
-You are an expert assistant for the Physical AI & Humanoid Robotics Textbook. Answer the user's question based on the provided context.
-
-Context from the textbook:
-{context}
-
-Question: {request.query}
-
-Please provide a detailed answer based on the context.
-"""
-
-        try:
-            # Generate response using Gemini with additional timeout handling
-            response = client.chat.completions.create(
-                model="gemini-1.5-flash",
-                messages=[
-                    {"role": "system", "content": "You are an expert assistant for the Physical AI & Humanoid Robotics Textbook. Provide accurate, helpful answers based on the context provided. Be concise but thorough, and cite relevant information from the textbook when possible."},
-                    {"role": "user", "content": prompt}
-                ],
-                max_tokens=1000,
-                temperature=0.7,
-                timeout=50.0  # Additional timeout for the completion request
-            )
-
-            answer = response.choices[0].message.content
-        except Exception as e:
-            logger.error(f"Error generating response: {e}")
-            # Provide a more specific error message for timeout-related issues
-            if "timeout" in str(e).lower() or "504" in str(e):
-                return QueryResponse(answer="The response is taking longer than expected. Please try your question again in a moment.", sources=sources)
-            else:
-                return QueryResponse(answer="I'm having trouble generating a response right now. Please try again later.", sources=sources)
-
-        return QueryResponse(answer=answer, sources=sources)
-
-    except Exception as e:
-        logger.error(f"Unexpected error in query_endpoint: {e}", exc_info=True)
-        return QueryResponse(answer="An unexpected error occurred. Please try again later.", sources=[])
+        return QueryResponse(
+            answer="I'm having trouble generating a response right now. The server might be busy. Please try again in a moment.",
+            sources=[],
+            original_answer=None,
+            personalization_applied=False,
+            translation_applied=False
+        )
 
 @app.post("/ingest")
 async def ingest_document(request: IngestRequest, background_tasks: BackgroundTasks):

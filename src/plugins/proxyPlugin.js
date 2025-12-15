@@ -15,12 +15,16 @@ function proxyPlugin(context, options) {
               context: ['/api', '/query', '/ingest', '/health'],
               target: 'http://127.0.0.1:8000',
               changeOrigin: true,
-              logLevel: 'debug',
+              logLevel: 'silent', // Reduce logging to avoid console noise
               onProxyReq: (proxyReq, req, res) => {
-                console.log(`Proxying ${req.method} ${req.url} to ${'http://127.0.0.1:8000'}`);
+                // Optional: Add custom logic here if needed
               },
               onProxyRes: (proxyRes, req, res) => {
-                console.log(`Received response from ${req.url} with status ${proxyRes.statusCode}`);
+                // Optional: Add custom logic here if needed
+              },
+              onError: (err, req, res) => {
+                // Handle proxy errors gracefully - this prevents the console error
+                console.warn(`Backend not available: ${req.url}. Using client-side fallback.`);
               }
             },
           ],

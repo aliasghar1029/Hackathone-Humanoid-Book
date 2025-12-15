@@ -1,0 +1,109 @@
+openapi: 3.0.0
+info:
+  title: Authentication API for Personalized Learning Platform
+  description: API for user authentication, profile management, and background collection
+  version: 1.0.0
+servers:
+  - url: https://api.yourdomain.com
+    description: Production server
+  - url: http://localhost:3000/api
+    description: Development server
+
+paths:
+  /auth/profile:
+    post:
+      summary: Update user profile with background information
+      description: Allows authenticated users to update their profile with technical background and preferences
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - background
+              properties:
+                background:
+                  type: string
+                  enum: [software-focused, hardware-focused, mixed]
+                  description: User's technical background
+                preferences:
+                  type: object
+                  description: Additional user preferences
+                  additionalProperties: true
+      responses:
+        '200':
+          description: Profile updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "success"
+                  message:
+                    type: string
+                    example: "Profile updated successfully"
+                  profile:
+                    $ref: '#/components/schemas/UserProfile'
+        '400':
+          description: Invalid request format
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: User not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    UserProfile:
+      type: object
+      properties:
+        userId:
+          type: string
+          description: Unique identifier from Better-Auth.com
+        background:
+          type: string
+          enum: [software-focused, hardware-focused, mixed]
+        preferences:
+          type: object
+          additionalProperties: true
+        createdAt:
+          type: string
+          format: date-time
+        lastLogin:
+          type: string
+          format: date-time
+        isActive:
+          type: boolean
+          default: true
+
+    ErrorResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: "error"
+        message:
+          type: string
+          example: "Error description"

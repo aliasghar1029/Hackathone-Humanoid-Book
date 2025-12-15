@@ -1,0 +1,146 @@
+openapi: 3.0.0
+info:
+  title: Personalization API for Learning Platform
+  description: API for content personalization based on user background
+  version: 1.0.0
+servers:
+  - url: https://api.yourdomain.com
+    description: Production server
+  - url: http://localhost:3000/api
+    description: Development server
+
+paths:
+  /personalization/rules:
+    get:
+      summary: Get personalization rules for user
+      description: Retrieve personalization rules based on user's technical background
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Rules retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  rules:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/PersonalizationRule'
+        '401':
+          description: User not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /personalization/apply:
+    post:
+      summary: Apply personalization to content
+      description: Apply personalization rules to specific content
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - content
+                - contentId
+              properties:
+                content:
+                  type: string
+                  description: Original content to personalize
+                contentId:
+                  type: string
+                  description: Identifier for the content
+                targetAudience:
+                  type: string
+                  enum: [software-focused, hardware-focused, mixed]
+                  description: Override target audience for this operation
+      responses:
+        '200':
+          description: Content personalized successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  originalContent:
+                    type: string
+                  personalizedContent:
+                    type: string
+                  appliedRules:
+                    type: array
+                    items:
+                      type: string
+        '400':
+          description: Invalid request format
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: User not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    PersonalizationRule:
+      type: object
+      properties:
+        ruleId:
+          type: string
+          description: Unique identifier for the rule
+        contentSelector:
+          type: string
+          description: CSS selector or content identifier
+        modificationType:
+          type: string
+          enum: [highlight, emphasize, simplify, expand, add-context]
+        targetAudience:
+          type: string
+          enum: [software-focused, hardware-focused, mixed]
+        modificationContent:
+          type: string
+          description: Content to replace or add
+        priority:
+          type: integer
+          description: Order of application
+        isActive:
+          type: boolean
+          default: true
+
+    ErrorResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: "error"
+        message:
+          type: string
+          example: "Error description"
